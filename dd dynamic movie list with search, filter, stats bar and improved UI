@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Watchlist</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Movie Watchlist</h1>
+        
+        <div class="stats-bar" id="statsBar" style="display: none;">
+            <span id="movieCount"></span>
+        </div>
+        
+        <div class="controls">
+            <input type="text" id="search" placeholder="🔍 Search your movies...">
+            <select id="filter">
+                <option value="">All Movies</option>
+                <option value="watched">✅ Watched</option>
+                <option value="unwatched">📝 To Watch</option>
+            </select>
+            <a href="add.html" class="btn">➕ Add New Movie</a>
+        </div>
+        
+        <div id="loading" class="loading-state" style="display: none;">
+            <p>Loading your movies...</p>
+        </div>
+        
+        <div id="movies" class="movies"></div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    
+    <script>
+        const API = 'http://localhost:3000/api/movies';
+        let allMovies = [];
+        
+        // Toast notification function
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast toast-${type}`;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+        
+        async function loadMovies() {
+            const loading = document.getElementById('loading');
+            const moviesDiv = document.getElementById('movies');
+            
+            try {
+                loading.style.display = 'block';
+                moviesDiv.innerHTML = '';
+                
+                const res = await fetch(API);
+                if (!res.ok) throw new Error('Failed to load movies');
+                
+                allMovies = await res.json();
+                displayMovies(allMovies);
+                updateStats();
+            } catch (error) {
+                moviesDiv.innerHTML = `
+                    <div class="empty-state">
+                        <p class="error-icon">😕</p>
+                        <h3>Oops! Something went wrong</h3>
+                        <p>We couldn't load your movies right now. Please check your connection and try again.</p>
+                        <button onclick="loadMovies()" class="btn" style="margin-top: 15px;">🔄 Try Again</button>
+                    </div>
+                `;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+        
+        function updateStats() {
+            const statsBar = document.getElementById('statsBar');
+            const movieCount = document.getElementById('movieCount');
+            
+            if (allMovies.length > 0) {
+                const watched = allMovies.filter(m => m.watched).length;
+                const toWatch = allMovies.filter(m => !m.watched).length;
+                
+                movieCount.innerHTML = `
+                    <strong>${allMovies.length}</strong> ${allMovies.length === 1 ? 'movie' : 'movies'} in your list • 
+                    <span style="color: #27ae60;">✅ ${watched} watched</span> • 
+                    <span style="color: #f39c12;">📝 ${toWatch} to watch</span>
+                `;
+                statsBar.style.display = 'block';
+            } else {
+                statsBar.style.display = 'none';
+            }
+        }
+        
+        function displayMovies(movies) {
+            const div = document.getElementById('movies');
+            
+            if (movies.length === 0) {
+                const searchTerm = document.getElementById('search').value;
+                const filterValue = document.getElementById('filter').value;
+                
+                if (searchTerm || filterValue) {
+                    div.innerHTML = `
+                        <div class="empty-state">
+                            <p class="empty-icon">🔍</p>
+                            <h3>No movies found</h3>
+                            <p>Try adjusting your search or filter to find what you're looking for.</p>
+                            <button onclick="document.getElementById('search').value=''; document.getElementById('filter').value=''; loadMovies();" class="btn" style="margin-top: 15px;">Clear Filters</button>
+                        </div>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <div class="empty-state">
+                            <p class="empty-icon">🎬</p>
+                            <h3>Your watchlist is empty!</h3>
+                            <p>Start building your movie collection by adding your first movie.</p>
+                            <a href="add.html" class="btn" style="margin-top: 15px; display: inline-block;">➕ Add Your First Movie</a>
+                        </div>
+                    `;
+                }
+                return;
+            }
+            
+            div.innerHTML = movies.map(movie => {
+                const shortName = movie.name.length > 15 ? movie.name.substring(0, 12) + '...' : movie.name;
+                const posterUrl = movie.posterUrl && movie.posterUrl.trim() !== '' ? movie.posterUrl : '';
+                return `
+                <div class="movie-card" onclick="viewDetails('${movie.id}')">
+                    ${posterUrl ? 
+                        `<img src="${posterUrl}" loading="lazy" onerror="this.onerror=null; this.style.display='none'; const placeholder = this.nextElementSibling; if(placeholder) placeholder.style.display='flex';" alt="${movie.name}">` : 
+                        ''
+                    }
+                    <div class="poster-placeholder" style="${posterUrl ? 'display: none;' : 'display: flex;'}">
+                        <span>${shortName}</span>
+                    </div>
+                    <h3>${movie.name}</h3>
+                    <p class="movie-meta">${movie.year} • ${movie.genre}</p>
+                    ${movie.rating ? `<p class="movie-rating">⭐ ${movie.rating}/10</p>` : '<p class="movie-rating">⭐ No rating yet</p>'}
+                    <span class="status ${movie.watched ? 'watched' : 'unwatched'}">
+                        ${movie.watched ? '✅ Watched' : '📝 To Watch'}
+                    </span>
+                </div>
+            `;
+            }).join('');
+        }
+        
+        function viewDetails(id) {
+            window.location.href = `details.html?id=${id}`;
+        }
+        
+        document.getElementById('search').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allMovies.filter(m => 
+                m.name.toLowerCase().includes(term) ||
+                (m.description && m.description.toLowerCase().includes(term)) ||
+                m.genre.toLowerCase().includes(term)
+            );
+            displayMovies(filtered);
+        });
+        
+        document.getElementById('filter').addEventListener('change', (e) => {
+            const value = e.target.value;
+            let filtered = allMovies;
+            if (value === 'watched') filtered = allMovies.filter(m => m.watched);
+            if (value === 'unwatched') filtered = allMovies.filter(m => !m.watched);
+            displayMovies(filtered);
+        });
+        
+        loadMovies();
+    </script>
+</body>
+</html>

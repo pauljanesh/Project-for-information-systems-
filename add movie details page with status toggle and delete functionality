@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details - Movie Watchlist</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="loading" class="loading-state" style="display: none;">
+            <p>Loading movie details...</p>
+        </div>
+        <div id="movie" class="movie-details"></div>
+    </div>
+    
+    <div id="toast" class="toast"></div>
+    
+    <script>
+        const API = 'http://localhost:3000/api/movies';
+        const id = new URLSearchParams(window.location.search).get('id');
+        
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast toast-${type}`;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+        
+        async function loadMovie() {
+            const loading = document.getElementById('loading');
+            const movieDiv = document.getElementById('movie');
+            
+            try {
+                loading.style.display = 'block';
+                movieDiv.innerHTML = '';
+                
+                const res = await fetch(`${API}/${id}`);
+                if (!res.ok) throw new Error('Movie not found');
+                
+                const movie = await res.json();
+                displayMovie(movie);
+            } catch (error) {
+                movieDiv.innerHTML = `
+                    <div class="empty-state">
+                        <p class="error-icon">😕</p>
+                        <h3>Movie Not Found</h3>
+                        <p>This movie doesn't exist in your watchlist or may have been removed.</p>
+                        <a href="index.html" class="btn" style="margin-top: 15px; display: inline-block;">← Back to Home</a>
+                    </div>
+                `;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+        
+        function displayMovie(movie) {
+            const shortName = movie.name.length > 20 ? movie.name.substring(0, 17) + '...' : movie.name;
+            const posterUrl = movie.posterUrl && movie.posterUrl.trim() !== '' ? movie.posterUrl : '';
+            document.getElementById('movie').innerHTML = `
+                <div class="detail-card">
+                    ${posterUrl ? 
+                        `<img src="${posterUrl}" loading="lazy" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="${movie.name}">` : 
+                        ''
+                    }
+                    <div class="poster-placeholder-large" style="${posterUrl ? 'display: none;' : 'display: flex;'}">
+                        <span>${shortName}</span>
+                    </div>
+                    <div class="detail-info">
+                        <h2>${movie.name}</h2>
+                        <div class="movie-details-grid">
+                            <p><strong>📅 Year:</strong> ${movie.year}</p>
+                            <p><strong>🎭 Genre:</strong> ${movie.genre}</p>
+                            ${movie.rating ? 
+                                `<p><strong>⭐ Rating:</strong> ${movie.rating}/10</p>` : 
+                                '<p><strong>⭐ Rating:</strong> <em>Not rated yet</em></p>'
+                            }
+                            <p><strong>Status:</strong> 
+                                <span class="status ${movie.watched ? 'watched' : 'unwatched'}">
+                                    ${movie.watched ? '✅ Watched' : '📝 To Watch'}
+                                </span>
+                            </p>
+                        </div>
+                        ${movie.description ? 
+                            `<div class="description-box">
+                                <strong>📖 About:</strong>
+                                <p>${movie.description}</p>
+                            </div>` : 
+                            '<p class="no-description"><em>No description added yet.</em></p>'
+                        }
+                        
+                        <div class="actions">
+                            <button onclick="toggleWatched()" class="btn btn-success">
+                                ${movie.watched ? '↩️ Mark as Unwatched' : '✅ Mark as Watched'}
+                            </button>
+                            <a href="edit.html?id=${movie.id}" class="btn">✏️ Edit Details</a>
+                            <button onclick="deleteMovie()" class="btn btn-danger">🗑️ Delete Movie</button>
+                            <a href="index.html" class="btn btn-secondary">← Back to Home</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        async function toggleWatched() {
+            try {
+                const res = await fetch(`${API}/${id}/watched`, { method: 'PATCH' });
+                if (res.ok) {
+                    showToast('✅ Status updated!', 'success');
+                    loadMovie();
+                } else {
+                    showToast('❌ Could not update status. Please try again.', 'error');
+                }
+            } catch (error) {
+                showToast('❌ Connection error. Please try again.', 'error');
+            }
+        }
+        
+        async function deleteMovie() {
+            if (!confirm('🗑️ Are you sure you want to remove this movie from your watchlist?')) return;
+            
+            try {
+                const res = await fetch(`${API}/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    showToast('🗑️ Movie removed from your watchlist', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    showToast('❌ Could not delete movie. Please try again.', 'error');
+                }
+            } catch (error) {
+                showToast('❌ Connection error. Please try again.', 'error');
+            }
+        }
+        
+        loadMovie();
+    </script>
+</body>
+</html>

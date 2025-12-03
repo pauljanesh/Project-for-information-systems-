@@ -1,0 +1,108 @@
+const express = require('express');
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
+
+const app = express();
+const PORT = 3000;
+const DATA_FILE = path.join(__dirname, 'movies.json');
+
+app.use(cors());
+app.use(express.json());
+
+
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+
+
+if (!fs.existsSync(DATA_FILE)) {
+  fs.writeFileSync(DATA_FILE, '[]');
+}
+
+
+function readMovies() {
+  return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+}
+
+function writeMovies(movies) {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(movies, null, 2));
+}
+
+
+app.get('/api/movies', (req, res) => {
+  res.json(readMovies());
+});
+
+
+app.get('/api/movies/:id', (req, res) => {
+  const movies = readMovies();
+  const movie = movies.find(m => m.id === req.params.id);
+  if (!movie) return res.status(404).json({ error: 'Not found' });
+  res.json(movie);
+});
+
+
+app.post('/api/movies', (req, res) => {
+  const { name, genre, year, rating, description, posterUrl } = req.body;
+  if (!name || !genre || !year) {
+    return res.status(400).json({ error: 'Name, genre, and year required' });
+  }
+  
+  const movies = readMovies();
+  const newMovie = {
+    id: Date.now().toString(),
+    name,
+    genre,
+    year: parseInt(year),
+    rating: rating ? parseFloat(rating) : null,
+    description: description || '',
+    posterUrl: posterUrl || '',
+    watched: false
+  };
+  
+  movies.push(newMovie);
+  writeMovies(movies);
+  res.json(newMovie);
+});
+
+
+app.put('/api/movies/:id', (req, res) => {
+  const movies = readMovies();
+  const index = movies.findIndex(m => m.id === req.params.id);
+  if (index === -1) return res.status(404).json({ error: 'Not found' });
+  
+  movies[index] = { ...movies[index], ...req.body };
+  writeMovies(movies);
+  res.json(movies[index]);
+});
+
+
+app.patch('/api/movies/:id/watched', (req, res) => {
+  const movies = readMovies();
+  const index = movies.findIndex(m => m.id === req.params.id);
+  if (index === -1) return res.status(404).json({ error: 'Not found' });
+  
+  movies[index].watched = !movies[index].watched;
+  writeMovies(movies);
+  res.json(movies[index]);
+});
+
+
+app.delete('/api/movies/:id', (req, res) => {
+  const movies = readMovies();
+  const filtered = movies.filter(m => m.id !== req.params.id);
+  if (movies.length === filtered.length) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  writeMovies(filtered);
+  res.json({ message: 'Deleted' });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+

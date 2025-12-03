@@ -10,7 +10,8 @@
     <div class="container">
         <h1>➕ Add New Movie</h1>
         <p class="subtitle">Share a movie you love or want to watch!</p>
-        
+
+
         <form id="form" class="form">
             <div class="form-group">
                 <label for="name">Movie Name *</label>

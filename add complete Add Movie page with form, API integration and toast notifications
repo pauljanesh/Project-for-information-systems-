@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Movie - Movie Watchlist</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>➕ Add New Movie</h1>
+        <p class="subtitle">Share a movie you love or want to watch!</p>
+        
+        <form id="form" class="form">
+            <div class="form-group">
+                <label for="name">Movie Name *</label>
+                <input type="text" id="name" placeholder="e.g., The Matrix, Inception..." required>
+            </div>
+            
+            <div class="form-group">
+                <label for="genre">Genre *</label>
+                <input type="text" id="genre" placeholder="e.g., Action, Drama, Comedy..." required>
+            </div>
+            
+            <div class="form-group">
+                <label for="year">Release Year *</label>
+                <input type="number" id="year" placeholder="e.g., 2020" min="1900" max="2030" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="rating">Your Rating (0-10)</label>
+                <input type="number" id="rating" placeholder="Rate it from 0 to 10" min="0" max="10" step="0.1">
+                <small>Leave empty if you haven't watched it yet</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" placeholder="What's this movie about? (optional)" rows="4"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="posterUrl">Poster Image URL</label>
+                <input type="url" id="posterUrl" placeholder="https://example.com/poster.jpg (optional)">
+                <small>You can add a poster image later if you don't have one now</small>
+            </div>
+            
+            <div class="buttons">
+                <button type="submit" id="submitBtn">✨ Add to Watchlist</button>
+                <a href="index.html" class="btn btn-secondary">← Back to Home</a>
+            </div>
+        </form>
+    </div>
+    
+    <div id="toast" class="toast"></div>
+    
+    <script>
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast toast-${type}`;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+        
+        document.getElementById('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Adding...';
+            
+            const data = {
+                name: document.getElementById('name').value.trim(),
+                genre: document.getElementById('genre').value.trim(),
+                year: document.getElementById('year').value,
+                rating: document.getElementById('rating').value || null,
+                description: document.getElementById('description').value.trim(),
+                posterUrl: document.getElementById('posterUrl').value.trim()
+            };
+            
+            try {
+                const res = await fetch('http://localhost:3000/api/movies', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (res.ok) {
+                    showToast('🎉 Movie added successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    const error = await res.json();
+                    showToast(`❌ ${error.error || 'Could not add movie. Please try again.'}`, 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+            } catch (error) {
+                showToast('❌ Connection error. Please check your internet and try again.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+[
+  {
+    "id": "1704067201000",
+    "name": "Inception",
+    "genre": "Sci-Fi",
+    "year": 2010,
+    "rating": 8.8,
+    "description": "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
+    "watched": true
+  },
+  {
+    "id": "1704067202000",
+    "name": "The Dark Knight",
+    "genre": "Action",
+    "year": 2008,
+    "rating": 9,
+    "description": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+    "watched": true
+  },
+  {
+    "id": "1704067203000",
+    "name": "Pulp Fiction",
+    "genre": "Crime",
+    "year": 1994,
+    "rating": 8.9,
+    "description": "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
+    "watched": false
+  },
+  {
+    "id": "1704067204000",
+    "name": "Interstellar",
+    "genre": "Sci-Fi",
+    "year": 2014,
+    "rating": 8.6,
+    "description": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+    "watched": false
+  },
+  {
+    "id": "1704067208000",
+    "name": "The Matrix",
+    "genre": "Action",
+    "year": 1999,
+    "rating": 8.7,
+    "description": "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
+    "watched": true
+  },
+  {
+    "id": "1704067209000",
+    "name": "Spirited Away",
+    "genre": "Animation",
+    "year": 2001,
+    "rating": 8.6,
+    "description": "During her family's move to the suburbs, a sullen 10-year-old girl wanders into a world ruled by gods, witches, and spirits, and where humans are changed into beasts.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg",
+    "watched": false
+  },
+  {
+    "id": "1704067210000",
+    "name": "The Godfather",
+    "genre": "Crime",
+    "year": 1972,
+    "rating": 9.2,
+    "description": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg",
+    "watched": true
+  },
+  {
+    "id": "1704067211000",
+    "name": "Dune",
+    "genre": "Sci-Fi",
+    "year": 2021,
+    "rating": 8,
+    "description": "Paul Atreides leads a rebellion to restore his family's noble name in a war for control of the desert planet Arrakis and its supply of spice.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg",
+    "watched": false
+  },
+  {
+    "id": "1704067212000",
+    "name": "Everything Everywhere All at Once",
+    "genre": "Comedy",
+    "year": 2022,
+    "rating": 8.1,
+    "description": "A middle-aged Chinese immigrant is swept up into an insane adventure in which she alone can save the multiverse.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/w3LxiVYdWWRvEVdn5RYq6jIqkb1.jpg",
+    "watched": false
+  },
+  {
+    "id": "1704067213000",
+    "name": "Whiplash",
+    "genre": "Drama",
+    "year": 2014,
+    "rating": 8.5,
+    "description": "A promising young drummer enrolls at a cut-throat music conservatory where his dreams of greatness are mentored by an instructor who will stop at nothing to realize a student's potential.",
+    "posterUrl": "https://image.tmdb.org/t/p/w500/7fn624j5lj3xTme2SgiLCeuedmO.jpg",
+    "watched": true
+  },
+  {
+    "id": "1764613555429",
+    "name": "avatar",
+    "genre": "scientific",
+    "year": 2012,
+    "rating": 8,
+    "description": "future",
+    "posterUrl": "",
+    "watched": false
+  }
+]

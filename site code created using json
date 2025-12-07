@@ -94,7 +94,7 @@
     "name": "Whiplash",
     "genre": "Drama",
     "year": 2014,
-    "rating": 8.5,
+    "rating": 8.4,
     "description": "A promising young drummer enrolls at a cut-throat music conservatory where his dreams of greatness are mentored by an instructor who will stop at nothing to realize a student's potential.",
     "posterUrl": "https://image.tmdb.org/t/p/w500/7fn624j5lj3xTme2SgiLCeuedmO.jpg",
     "watched": true
@@ -107,6 +107,6 @@
     "rating": 8,
     "description": "future",
     "posterUrl": "",
-    "watched": false
+    "watched":false 
   }
 ]

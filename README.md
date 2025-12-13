@@ -188,3 +188,13 @@ Future Enhancements;
 
 Conclusion;
 The Movie Watchlist project successfully demonstrates the fundamentals of full-stack web development using HTML, CSS, JavaScript, Node.js, Express.js, and JSON. It provides hands-on experience with CRUD operations and file-based data storage, making it a strong foundation for learning database-driven applications in the future.
+
+references are :
+
+https://github.com/louiseka/film-watchlist
+
+https://chatgpt.com/share/693da91b-fb80-8002-bed6-f211720b742f
+
+https://github.com/hinedy/Movie-Watchlist
+
+https://share.google/LCsbxWbBPTCkIi3Sb

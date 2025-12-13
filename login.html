@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Movie Watchlist</title>
+    <style>
+       
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #43e97b, #38f9d7); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #fff;
+            padding: 2.5rem 3rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            width: 350px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #43e97b;
+            outline: none;
+        }
+
+        button.btn {
+            width: 100%;
+            padding: 0.7rem;
+            background: #43e97b; 
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button.btn:hover {
+            background: #38c76a; 
+        }
+
+    
+        .error-message {
+            color: red;
+            margin-top: 0.8rem;
+            font-size: 0.9rem;
+        }
+
+       
+        .signup-text {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .signup-text a {
+            color: #43e97b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .signup-text a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Movie Watchlist</h1>
+        <p class="subtitle">Login to manage your favorite movies!</p>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        
+        <p id="errorMessage" class="error-message" style="display:none;"></p>
+        <p class="signup-text">Don't have an account? <a href="signup.html">Sign up here</a></p>
+    </div>
+
+    <script>
+        
+        async function checkLoginStatus() {
+            try {
+                const res = await fetch('http://localhost:3001/api/movies', { credentials: 'include' });
+                if (res.ok) {
+                    window.location.href = "index.html";
+                } else if (res.status === 401) {
+                    // Not authenticated, stay on login page
+                }
+            } catch (error) {
+                // Connection error, stay on login page
+            }
+        }
+
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+
+        
+        checkLoginStatus();
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            errorMessage.style.display = 'none';
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('http://localhost:3001/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (res.ok) {
+                    alert("Login successful!");
+                    window.location.href = "index.html";
+                } else {
+                    errorMessage.textContent = "Invalid username or password!";
+                    errorMessage.style.display = "block";
+                }
+            } catch (error) {
+                errorMessage.textContent = "Connection error. Please try again.";
+                errorMessage.style.display = "block";
+            }
+        });
+    </script>
+</body>
+</html>

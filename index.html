@@ -22,6 +22,7 @@
                 <option value="unwatched">📝 To Watch</option>
             </select>
             <a href="add.html" class="btn">➕ Add New Movie</a>
+            <a href="/logout" class="btn" style="background: #e74c3c;">Logout</a>
         </div>
         
         <div id="loading" class="loading-state" style="display: none;">
@@ -31,14 +32,14 @@
         <div id="movies" class="movies"></div>
     </div>
     
-    <!-- Toast Notification -->
+   
     <div id="toast" class="toast"></div>
     
     <script>
-        const API = 'http://localhost:3000/api/movies';
+        const API = 'http://localhost:3001/api/movies';
         let allMovies = [];
         
-        // Toast notification function
+        
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             toast.textContent = message;
@@ -52,14 +53,20 @@
         async function loadMovies() {
             const loading = document.getElementById('loading');
             const moviesDiv = document.getElementById('movies');
-            
+
             try {
                 loading.style.display = 'block';
                 moviesDiv.innerHTML = '';
-                
-                const res = await fetch(API);
-                if (!res.ok) throw new Error('Failed to load movies');
-                
+
+                const res = await fetch(API, { credentials: 'include' });
+                if (!res.ok) {
+                    if (res.status === 401) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    throw new Error('Failed to load movies');
+                }
+
                 allMovies = await res.json();
                 displayMovies(allMovies);
                 updateStats();
